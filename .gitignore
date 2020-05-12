@@ -1,0 +1,3 @@
+# Project exclude paths
+/brains-cloud-client/target/
+/brains-cloud-server/target/
