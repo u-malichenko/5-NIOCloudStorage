@@ -5,14 +5,13 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.DelimiterBasedFrameDecoder;
-import io.netty.handler.codec.Delimiters;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
 
-public class Server {
+public class ServerApp {
+    private DataBaseAuthService authService; // сервис проверки авторизации
 
     public void run() throws Exception {
+        authService = new DataBaseAuthService(); //тяжелый конекшин к базе запускается 1 раз при старте сервера
+
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
@@ -22,20 +21,20 @@ public class Server {
                     .childHandler(new ChannelInitializer<SocketChannel>() { // (4)
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
-                            ch.pipeline().addLast(new AuthHandler());
+                            ch.pipeline().addLast(new AuthHandler(authService)); //вначале добавляем только хелпер авторизации, далее если успешно он добавит главный хелпер
                         }
                     });
-            // .childOption(ChannelOption.SO_KEEPALIVE, true);
             ChannelFuture f = b.bind(8189).sync();
             System.out.println("Сервер запущен на порту: 8189");
-            f.channel().closeFuture().sync();
+            f.channel().closeFuture().sync(); //фьюче ожидаем завершение работы сервера
         } finally {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
+            authService.disconnect(); // закрываем коннект с БД
         }
     }
 
     public static void main(String[] args) throws Exception {
-        new Server().run();
+        new ServerApp().run();
     }
 }
