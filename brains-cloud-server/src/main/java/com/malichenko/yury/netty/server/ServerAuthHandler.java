@@ -30,12 +30,14 @@ public class ServerAuthHandler extends ChannelInboundHandlerAdapter {
     private int passwordLength;
     private String login;
     private String password;
-    private ServerAuthHandler.State currentState = State.LOGIN_LENGTH;
-    private Logger logger = LogManager.getLogger();
+    private State currentState;
+    private Logger logger;
     private Path userPath;
 
     public ServerAuthHandler(ServerDBAuthService authService) {
         this.authService = authService;
+        logger = LogManager.getLogger();
+        currentState = State.IDLE;
     }
 
     /**
