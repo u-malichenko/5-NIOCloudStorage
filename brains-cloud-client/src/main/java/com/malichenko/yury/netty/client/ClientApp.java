@@ -8,17 +8,14 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-/**
- * JavaFX App
- */
-public class App extends Application {
+public class ClientApp extends Application {
 
     private static Scene scene;
 
     @Override
     public void start(Stage stage) {
         try {
-            stage.setTitle("Cloud Storage");
+            stage.setTitle("Brains Cloud");
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/main.fxml"));
             Parent root;
             root = loader.load();

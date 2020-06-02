@@ -6,12 +6,12 @@ import java.util.concurrent.*;
 /**
  * Сервис авторизации клиента в БД
  */
-public class DataBaseAuthService {
-    private static Connection conn; //конекшен к базе 1 на всех
-    private static Statement stmt; //стейтмен тож 1
-    private static ExecutorService ex; //треды для выполнения запростов
+public class ServerDBAuthService {
+    private static Connection conn;
+    private static Statement stmt;
+    private static ExecutorService ex;
 
-    public DataBaseAuthService() {
+    public ServerDBAuthService() {
         try {
             connection(); // подключаемся к базе при старте сервера
         } catch (ClassNotFoundException | SQLException e) {
@@ -29,11 +29,11 @@ public class DataBaseAuthService {
         String directory = null;
         Future<String> future = ex.submit(new DirectoryOfUser(loginEntry, passEntry)); //запускаем метод проверки
         try {
-            directory = future.get(); //фюче возвращает директорию
+            directory = future.get(); //фюче возвращает директорию (из базы логин и пароль подошли)
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
-        return directory;//возвращает переменную директория
+        return directory;
     }
 
     /**
@@ -45,7 +45,7 @@ public class DataBaseAuthService {
         Class.forName("org.sqlite.JDBC");
         conn = DriverManager.getConnection("jdbc:sqlite:db.db");
         stmt = conn.createStatement();
-        ex = Executors.newFixedThreadPool(10);
+        ex = Executors.newFixedThreadPool(2);
     }
 
     /**
@@ -65,8 +65,8 @@ public class DataBaseAuthService {
      * запрос к БД
      */
     private static class DirectoryOfUser implements Callable<String> {
-        String loginEntry; //логин
-        String passEntry; //пароль
+        String loginEntry;
+        String passEntry;
 
         DirectoryOfUser(String loginEntry, String passEntry) {
             this.loginEntry = loginEntry;
@@ -78,10 +78,10 @@ public class DataBaseAuthService {
             String directory = null;
             try {
                 ResultSet rs = stmt.executeQuery(
-                        "SELECT * FROM users_info " + "WHERE login = '" + loginEntry + "' AND password = '" + passEntry + "' LIMIT 1"); //запрос в БД
-                while (rs.next()) { //пока есть что читать в ответе из запроса
+                        "SELECT * FROM users_info " + "WHERE login = '" + loginEntry + "' AND password = '" + passEntry + "' LIMIT 1");
+                while (rs.next()) {
                     directory = rs.getString("login"); //директоря = значению в столбце логин
-                    rs.close(); //закрыть результат
+                    rs.close();
                 }
             } catch (SQLException e) {
                 e.printStackTrace();

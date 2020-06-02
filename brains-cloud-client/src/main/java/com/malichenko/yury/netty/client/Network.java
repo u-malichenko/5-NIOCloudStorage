@@ -14,13 +14,14 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 public class Network {
+    private static final String HOSTNAME = "localhost";
+    private static final int PORT = 8189;
 
     private static Network ourInstance = new Network();
     public static Network getInstance() {
-                return ourInstance;
+        return ourInstance;
     }
-    public Network() {}
-
+    private Network() {}
 
     private Channel currentChannel;
 
@@ -28,34 +29,37 @@ public class Network {
         return currentChannel;
     }
 
-    public void startNetwork(CountDownLatch countDownLatch, List<Callback> callbackList) {
+    public void start(CountDownLatch connectionOpened, List<Callback> callbackList) {
         EventLoopGroup group = new NioEventLoopGroup();
         try {
             Bootstrap clientBootstrap = new Bootstrap();
             clientBootstrap.group(group)
                     .channel(NioSocketChannel.class)
-                    .remoteAddress(new InetSocketAddress("localhost", 8189))
+                    .remoteAddress(new InetSocketAddress(HOSTNAME, PORT))
                     .handler(new ChannelInitializer<SocketChannel>() {
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
-                            socketChannel.pipeline().addLast(new ClientHandler(callbackList));
+                            socketChannel.pipeline().addLast(new ClientAuthHandler(callbackList));
                             currentChannel = socketChannel;
                         }
                     });
             ChannelFuture channelFuture = clientBootstrap.connect().sync();
-            countDownLatch.countDown();
+            connectionOpened.countDown();
             channelFuture.channel().closeFuture().sync();
         } catch (Exception e) {
-            GUIHelper.showError(e);
+            e.printStackTrace();
         } finally {
             try {
                 group.shutdownGracefully().sync();
             } catch (InterruptedException e) {
-                GUIHelper.showError(e);
+                e.printStackTrace();
             }
         }
     }
 
+    /**
+     * controller.shutdown()-Network.getInstance().stop();
+     */
     public void stop() {
         currentChannel.close();
-    }
+    } //todo disconnect client channel-close
 }

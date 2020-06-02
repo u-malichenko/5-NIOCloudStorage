@@ -20,6 +20,6 @@
             <AppenderRef ref="STDOUT" />
             <AppenderRef ref="FILE" />
         </Root>
-        <Logger name="com.malichenko.yury.netty.server.Server" level="debug" />
+        <Logger name="com.malichenko.yury.netty.server.ServerApp" level="debug" />
     </Loggers>
 </Configuration>

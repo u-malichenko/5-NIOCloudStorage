@@ -1,90 +1,87 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuItem?>
-<VBox maxHeight="Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
-      xmlns="http://javafx.com/javafx/10.0.2" xmlns:fx="http://javafx.com/fxml/1"
+<?import javafx.scene.text.Font?>
+<VBox alignment="CENTER" prefHeight="550.0" prefWidth="890.0" xmlns="http://javafx.com/javafx/10.0.2-internal"
+      xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.malichenko.yury.netty.client.Controller">
     <MenuBar>
         <Menu text="Файл">
-            <MenuItem text="Выйти из программы" onAction="#btnExitAction"/>
+            <MenuItem onAction="#btnExitAction" text="Выйти из программы"/>
         </Menu>
     </MenuBar>
-    <HBox>
-        <VBox fx:id="authPanel" alignment="CENTER" spacing="5">
-            <TextField fx:id="loginField" promptText="Логин" VBox.vgrow="ALWAYS"/>
-            <PasswordField fx:id="passField" promptText="Пароль" VBox.vgrow="ALWAYS"/>
-            <Button onAction="#sendAuth" text="Подключиться" VBox.vgrow="ALWAYS"/>
-            <padding>
-                <Insets bottom="5" left="5" right="5" top="5"/>
-            </padding>
-        </VBox>
+    <HBox fx:id="authPanel" alignment="CENTER" spacing="5">
+        <TextField fx:id="loginField" promptText="Логин"/>
+        <PasswordField fx:id="passField" promptText="Пароль"/>
+        <Button onAction="#sendAuth" text="Подключиться"/>
+        <padding>
+            <Insets bottom="5" left="5" right="5" top="5"/>
+        </padding>
+    </HBox>
 
-
-        <BorderPane fx:id="storagePanel" visible="false" VBox.vgrow="ALWAYS">
-            <top>
-                <VBox alignment="CENTER" BorderPane.alignment="CENTER" VBox.vgrow="ALWAYS">
-                    <HBox alignment="CENTER">
-                        <children>
-                            <Label alignment="CENTER" contentDisplay="CENTER" text="Локальное хранилище">
-                                <font>
-                                    <Font name="System Bold" size="14.0"/>
-                                </font>
-                            </Label>
-                            <Label alignment="CENTER" contentDisplay="CENTER" text="Серверное хранилище">
-                                <font>
-                                    <Font name="System Bold" size="14.0"/>
-                                </font>
-                            </Label>
-                        </children>
-                    </HBox>
-                </VBox>
-            </top>
-
-            <center>
-                <HBox alignment="CENTER" BorderPane.alignment="CENTER" VBox.vgrow="ALWAYS">
-                    <TableView fx:id="clientFilesTable" maxWidth="Infinity">
-                        <columns>
-                            <TableColumn fx:id="clientFilesName" text="Имя файла" maxWidth="Infinity"/>
-                            <TableColumn fx:id="clientFilesSize" text="Размер файла" maxWidth="Infinity"/>
-                        </columns>
-                    </TableView>
-                    <TableView fx:id="serverFilesTable" maxWidth="Infinity">
-                        <columns>
-                            <TableColumn fx:id="serverFilesName" text="Имя файла" maxWidth="Infinity"/>
-                            <TableColumn fx:id="serverFilesSize" text="Размер файла" maxWidth="Infinity"/>
-                        </columns>
-                    </TableView>
+    <!--    visible="false" -->
+    <VBox fx:id="storagePanel" VBox.vgrow="ALWAYS" visible="false">
+        <HBox VBox.vgrow="ALWAYS">
+            <VBox HBox.hgrow="ALWAYS">
+                <HBox>
+                    <Label text="Локальное хранилище" alignment="CENTER" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+                        <font>
+                            <Font name="System Bold" size="14.0" />
+                        </font>
+                    </Label>
                 </HBox>
-            </center>
-            <bottom>
+                <TableView fx:id="clientFilesTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="clientFilesName" maxWidth="Infinity" text="Имя файла" />
+                        <TableColumn fx:id="clientFilesSize" text="Размер файла" />
+                    </columns>
+                </TableView>
+                <properties>
+                </properties>
                 <HBox spacing="5">
-                    <Button onAction="#sendFile" maxWidth="Infinity" text="Отправить файл" HBox.hgrow="ALWAYS"/>
-                    <Button onAction="#clientFileDelete" maxWidth="Infinity" text="Удалить файл" HBox.hgrow="ALWAYS"/>
-                    <Button onAction="#refreshClientFilesTable" maxWidth="Infinity" text="Обновить список"
-                            HBox.hgrow="ALWAYS"/>
-                    <Button onAction="#downloadFile" maxWidth="Infinity" text="Скачать файл" HBox.hgrow="ALWAYS"/>
-                    <Button onAction="#serverFileDelete" maxWidth="Infinity" text="Удалить файл" HBox.hgrow="ALWAYS"/>
-                    <Button onAction="#refreshServerFilesTable" maxWidth="Infinity" text="Обновить список"
-                            HBox.hgrow="ALWAYS"/>
+                    <Button maxWidth="Infinity" focusTraversable="false" text="Отправить файл" HBox.hgrow="ALWAYS"
+                            onAction="#sendFile"/>
+                    <Button maxWidth="Infinity" focusTraversable="false" text="Удалить файл" HBox.hgrow="ALWAYS"
+                            onAction="#clientFileDelete"/>
+                    <Button maxWidth="Infinity" focusTraversable="false" text="Обновить список" HBox.hgrow="ALWAYS"
+                            onAction="#refreshClientFilesTable"/>
                     <padding>
-                        <Insets bottom="5" left="5" right="5" top="5"/>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                     </padding>
                 </HBox>
-            </bottom>
-        </BorderPane>
-    </HBox>
+            </VBox>
+
+            <VBox HBox.hgrow="ALWAYS">
+                <HBox>
+                    <Label text="Серверное хранилище" alignment="CENTER" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+                        <font>
+                            <Font name="System Bold" size="14.0" />
+                        </font>
+                    </Label>
+                </HBox>
+                <TableView fx:id="serverFilesTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="serverFilesName" maxWidth="Infinity" text="Имя файла" />
+                        <TableColumn fx:id="serverFilesSize" maxWidth="Infinity" text="Размер файла" />
+                    </columns>
+                </TableView>
+                <properties>
+                </properties>
+                <HBox spacing="5">
+                    <Button maxWidth="Infinity" focusTraversable="false" text="Скачать файл" HBox.hgrow="ALWAYS"
+                            onAction="#downloadFile"/>
+                    <Button maxWidth="Infinity" focusTraversable="false" text="Удалить файл" HBox.hgrow="ALWAYS"
+                            onAction="#serverFileDelete"/>
+                    <Button maxWidth="Infinity" focusTraversable="false" text="Обновить список"
+                            onAction="#refreshServerFilesTable"/>
+                    <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                    </padding>
+                </HBox>
+            </VBox>
+        </HBox>
+    </VBox>
 </VBox>

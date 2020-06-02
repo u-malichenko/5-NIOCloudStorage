@@ -7,11 +7,11 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 public class ServerApp {
-    private DataBaseAuthService authService; // сервис проверки авторизации
+    private static final int PORT = 8189;
+    private ServerDBAuthService authService;
 
     public void run() throws Exception {
-        authService = new DataBaseAuthService(); //тяжелый конекшин к базе запускается 1 раз при старте сервера
-
+        authService = new ServerDBAuthService();
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
@@ -21,16 +21,16 @@ public class ServerApp {
                     .childHandler(new ChannelInitializer<SocketChannel>() { // (4)
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
-                            ch.pipeline().addLast(new AuthHandler(authService)); //вначале добавляем только хелпер авторизации, далее если успешно он добавит главный хелпер
+                            ch.pipeline().addLast(new ServerAuthHandler(authService));
                         }
                     });
-            ChannelFuture f = b.bind(8189).sync();
-            System.out.println("Сервер запущен на порту: 8189");
-            f.channel().closeFuture().sync(); //фьюче ожидаем завершение работы сервера
+            ChannelFuture f = b.bind(PORT).sync();
+            System.out.println("Сервер запущен на порту: " + PORT);
+            f.channel().closeFuture().sync();
         } finally {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
-            authService.disconnect(); // закрываем коннект с БД
+            authService.disconnect();
         }
     }
 
